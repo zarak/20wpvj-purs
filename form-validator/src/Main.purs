@@ -137,3 +137,10 @@ nonEmpty _ value = pure value
 registration :: String -> String -> String -> String -> Registration
 registration username email password password2 =
     { username, email, password, password2 }
+
+validateRegistration :: Registration -> V Errors Registration
+validateRegistration r =
+    registration <$> nonEmpty "username" r.username
+                 <*> nonEmpty "email" r.email
+                 <*> nonEmpty "password" r.password
+                 <*> nonEmpty "password2" r.password2
