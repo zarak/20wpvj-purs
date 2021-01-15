@@ -49,19 +49,19 @@ main = do
 
              if usernameInput == ""
                  then showError username "Username is required"
-                 else log "Valid"
+                 else showSuccess username
 
              if emailInput == ""
                  then showError email "Email is required"
-                 else log "Valid"
+                 else showSuccess email
 
              if passwordInput == ""
                  then showError password "Password is required"
-                 else log "Valid"
+                 else showSuccess password
 
              if password2Input == ""
                  then showError password2 "Password is required"
-                 else log "Valid"
+                 else showSuccess password2
 
           log "Done"
 
@@ -78,6 +78,13 @@ showError input message = do
          Just fc -> do
             liftEffect $ Element.setClassName "form-control error" fc
             smallMessage fc message
+
+showSuccess :: Element.Element -> Effect Unit
+showSuccess input = do
+    formControl <- parentElement $ Element.toNode input
+    case formControl of
+         Nothing -> log $ "Element not found"
+         Just fc -> Element.setClassName "form-control success" fc
          
 smallMessage :: Element.Element -> String -> Effect Unit
 smallMessage el msg = do
