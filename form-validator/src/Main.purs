@@ -43,8 +43,24 @@ main = do
              preventDefault e
              -- eventValue e >>= log
              usernameInput <- inputValue (fromEventTarget (Element.toEventTarget username))
+             emailInput <- inputValue (fromEventTarget (Element.toEventTarget email))
+             passwordInput <- inputValue (fromEventTarget (Element.toEventTarget password))
+             password2Input <- inputValue (fromEventTarget (Element.toEventTarget password2))
+
              if usernameInput == ""
                  then showError username "Username is required"
+                 else log "Valid"
+
+             if emailInput == ""
+                 then showError email "Email is required"
+                 else log "Valid"
+
+             if passwordInput == ""
+                 then showError password "Password is required"
+                 else log "Valid"
+
+             if password2Input == ""
+                 then showError password2 "Password is required"
                  else log "Valid"
 
           log "Done"
@@ -61,15 +77,15 @@ showError input message = do
          Nothing -> log $ "Element not found"
          Just fc -> do
             liftEffect $ Element.setClassName "form-control error" fc
-            smallMessage fc
+            smallMessage fc message
          
-smallMessage :: Element.Element -> Effect Unit
-smallMessage el = do
+smallMessage :: Element.Element -> String -> Effect Unit
+smallMessage el msg = do
     let node = Element.toParentNode el
     mbSmall <- querySelector (QuerySelector "small") node
     case mbSmall of
          Nothing -> log "NOthing"
-         Just sm -> setTextContent "TESTING" (Element.toNode sm)
+         Just sm -> setTextContent msg (Element.toNode sm)
 
 addBetterListener
   :: forall a
