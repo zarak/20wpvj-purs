@@ -58,12 +58,18 @@ showError :: Element.Element -> String -> Effect Unit
 showError input message = do
     formControl <- parentElement $ Element.toNode input
     case formControl of
-         Nothing -> log "Nothing"
-         Just fc -> Element.setClassName "form-control error" fc
-            -- let mbSmall = querySelector (QuerySelector "small") formControl
-            -- case mbSmall of
-            --     Nothing -> log "Nothing"
-            --     Just a -> log a
+         Nothing -> log $ "Element not found"
+         Just fc -> do
+            liftEffect $ Element.setClassName "form-control error" fc
+            smallMessage fc
+         
+smallMessage :: Element.Element -> Effect Unit
+smallMessage el = do
+    let node = Element.toParentNode el
+    mbSmall <- querySelector (QuerySelector "small") node
+    case mbSmall of
+         Nothing -> log "NOthing"
+         Just sm -> setTextContent "TESTING" (Element.toNode sm)
 
 addBetterListener
   :: forall a
