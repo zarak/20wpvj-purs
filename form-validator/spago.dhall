@@ -8,6 +8,7 @@ You can edit this file as you like.
   , "effect"
   , "interpolate"
   , "psci-support"
+  , "validation"
   , "web-dom"
   , "web-events"
   , "web-html"

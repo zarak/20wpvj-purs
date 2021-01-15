@@ -4,6 +4,7 @@ import Prelude
 
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
+import Data.Validation.Semigroup (V, invalid)
 import Effect (Effect)
 import Effect.Console (log)
 import Effect.Class (liftEffect)
@@ -117,3 +118,5 @@ inputValue _ = pure ""
 maybeText :: Maybe Element.Element -> Effect String
 maybeText (Just el) = textContent  (Element.toNode el)
 maybeText _ = pure ""
+
+-- nonEmpty :: String -> String -> 
