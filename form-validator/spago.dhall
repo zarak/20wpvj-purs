@@ -4,7 +4,15 @@ You can edit this file as you like.
 -}
 { name = "my-project"
 , dependencies =
-  [ "console", "effect", "interpolate", "psci-support", "web-dom", "web-html" ]
+  [ "console"
+  , "effect"
+  , "interpolate"
+  , "psci-support"
+  , "web-dom"
+  , "web-events"
+  , "web-html"
+  , "web-uievents"
+  ]
 , packages = ./packages.dhall
 , sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
