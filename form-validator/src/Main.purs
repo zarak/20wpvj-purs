@@ -20,6 +20,16 @@ import Web.HTML.HTMLDocument as Document
 import Web.HTML.Window (document)
 import Web.UIEvent.MouseEvent.EventTypes as METypes
 
+type Errors = Array String
+
+type Registration
+    = { username :: String
+      , email :: String
+      , password :: String
+      , password2 :: String
+      }
+
+
 main :: Effect Unit
 main = do
     win <- window
@@ -119,4 +129,11 @@ maybeText :: Maybe Element.Element -> Effect String
 maybeText (Just el) = textContent  (Element.toNode el)
 maybeText _ = pure ""
 
--- nonEmpty :: String -> String -> 
+nonEmpty :: String -> String -> V Errors String
+nonEmpty field "" = invalid [ "Field '" <> field <> "' cannot be empty" ]
+nonEmpty _ value = pure value
+
+
+registration :: String -> String -> String -> String -> Registration
+registration username email password password2 =
+    { username, email, password, password2 }
