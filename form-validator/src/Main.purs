@@ -6,8 +6,9 @@ import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
+import Effect.Class (liftEffect)
 import Web.DOM.Element as Element
-import Web.DOM.Node (textContent, setTextContent, nodeValue)
+import Web.DOM.Node (textContent, setTextContent, nodeValue, parentElement)
 import Web.DOM.NodeList as NodeList
 import Web.DOM.ParentNode (QuerySelector(..), querySelector, querySelectorAll)
 import Web.Event.Event (EventType, Event, target, preventDefault)
@@ -25,15 +26,15 @@ main = do
     let docAsParent = Document.toParentNode doc
 
     mbForm <- querySelector (QuerySelector "#form") docAsParent
-    mbUserName <- querySelector (QuerySelector "#username") docAsParent
+    mbUsername <- querySelector (QuerySelector "#username") docAsParent
     mbEmail <- querySelector (QuerySelector "#email") docAsParent
     mbPassword <- querySelector (QuerySelector "#password") docAsParent
     mbPassword2 <- querySelector (QuerySelector "#password2") docAsParent
 
     mbButtonMain <- querySelector (QuerySelector "#mainButton") docAsParent
 
-    case mbForm, mbUserName, mbEmail, mbPassword, mbPassword2, mbButtonMain of
-        Just form, Just userName, Just email, Just password, Just password2,
+    case mbForm, mbUsername, mbEmail, mbPassword, mbPassword2, mbButtonMain of
+        Just form, Just username, Just email, Just password, Just password2,
         Just bMain -> do
           let
             buttonMain    = Element.toEventTarget bMain
@@ -41,8 +42,10 @@ main = do
           removeListener <- addBetterListener METypes.click false buttonMain \e -> do
              preventDefault e
              -- eventValue e >>= log
-             inputValue (fromEventTarget (Element.toEventTarget userName)) >>=
-                 log
+             usernameInput <- inputValue (fromEventTarget (Element.toEventTarget username))
+             if usernameInput == ""
+                 then showError username "Username is required"
+                 else log "Valid"
 
           log "Done"
 
@@ -50,6 +53,17 @@ main = do
           log $ "Could not get all buttons."
 
     log "Test"
+
+showError :: Element.Element -> String -> Effect Unit
+showError input message = do
+    formControl <- parentElement $ Element.toNode input
+    case formControl of
+         Nothing -> log "Nothing"
+         Just fc -> Element.setClassName "form-control error" fc
+            -- let mbSmall = querySelector (QuerySelector "small") formControl
+            -- case mbSmall of
+            --     Nothing -> log "Nothing"
+            --     Just a -> log a
 
 addBetterListener
   :: forall a
