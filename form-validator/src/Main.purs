@@ -29,7 +29,6 @@ type Registration
       , password2 :: String
       }
 
-
 main :: Effect Unit
 main = do
     win <- window
@@ -74,6 +73,11 @@ main = do
                  then showError password2 "Password is required"
                  else showSuccess password2
 
+             validateRegistration { username = usernameInput 
+                                  , email = emailInput 
+                                  , password = passwordInput 
+                                  , password2 = password2Input 
+                                  }
           log "Done"
 
         _, _, _, _, _, _ -> do
@@ -129,13 +133,14 @@ maybeText :: Maybe Element.Element -> Effect String
 maybeText (Just el) = textContent  (Element.toNode el)
 maybeText _ = pure ""
 
+
 nonEmpty :: String -> String -> V Errors String
 nonEmpty field "" = invalid [ "Field '" <> field <> "' cannot be empty" ]
 nonEmpty _ value = pure value
 
 
 registration :: String -> String -> String -> String -> Registration
-registration username email password password2 =
+registration username email password password2 = 
     { username, email, password, password2 }
 
 validateRegistration :: Registration -> V Errors Registration
