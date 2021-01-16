@@ -22,6 +22,18 @@ import Web.UIEvent.MouseEvent.EventTypes as METypes
 
 type Errors = Array String
 
+data FieldName =
+    Username
+    | Email
+    | Password1
+    | Password2
+
+instance showFieldName :: Show FieldName where
+    show Username = "Username"
+    show Email = "Email"
+    show Password1 = "Password1"
+    show Password2 = "Password2"
+
 type Registration
     = { username :: String
       , email :: String
@@ -73,11 +85,10 @@ main = do
                  then showError password2 "Password is required"
                  else showSuccess password2
 
-             validateRegistration { username = usernameInput 
-                                  , email = emailInput 
-                                  , password = passwordInput 
-                                  , password2 = password2Input 
-                                  }
+             let res = validateRegistration $ registration usernameInput emailInput passwordInput password2Input
+             log $ show res
+
+
           log "Done"
 
         _, _, _, _, _, _ -> do
@@ -134,8 +145,8 @@ maybeText (Just el) = textContent  (Element.toNode el)
 maybeText _ = pure ""
 
 
-nonEmpty :: String -> String -> V Errors String
-nonEmpty field "" = invalid [ "Field '" <> field <> "' cannot be empty" ]
+nonEmpty :: FieldName -> String -> V Errors String
+nonEmpty field "" = invalid [ "Field '" <> show field <> "' cannot be empty" ]
 nonEmpty _ value = pure value
 
 
@@ -145,7 +156,7 @@ registration username email password password2 =
 
 validateRegistration :: Registration -> V Errors Registration
 validateRegistration r =
-    registration <$> nonEmpty "username" r.username
-                 <*> nonEmpty "email" r.email
-                 <*> nonEmpty "password" r.password
-                 <*> nonEmpty "password2" r.password2
+    registration <$> nonEmpty Username r.username
+                 <*> nonEmpty Email r.email
+                 <*> nonEmpty Password1 r.password
+                 <*> nonEmpty Password2 r.password2
