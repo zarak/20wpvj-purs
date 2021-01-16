@@ -4,6 +4,7 @@ import Prelude
 
 import Data.Foldable (for_)
 import Data.Maybe (Maybe(..))
+import Data.String (length)
 import Data.Validation.Semigroup (V, invalid)
 import Effect (Effect)
 import Effect.Console (log)
@@ -158,5 +159,10 @@ validateRegistration :: Registration -> V Errors Registration
 validateRegistration r =
     registration <$> nonEmpty Username r.username
                  <*> nonEmpty Email r.email
-                 <*> nonEmpty Password1 r.password
-                 <*> nonEmpty Password2 r.password2
+                 <*> (nonEmpty Password1 r.password *> lengthIs Password1 8 r.password)
+                 <*> (nonEmpty Password2 r.password2 *> lengthIs Password2 8 r.password2)
+
+lengthIs :: FieldName -> Int -> String -> V Errors String
+lengthIs field len value
+    | length value < len = invalid [ "Field '" <> show field <> "' must have more than " <> show len <> " characters" ]
+    | otherwise = pure value
